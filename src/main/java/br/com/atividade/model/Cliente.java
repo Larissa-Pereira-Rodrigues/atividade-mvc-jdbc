@@ -1,25 +1,22 @@
 package br.com.atividade.model;
 
-public class Tutor {
+public class Cliente {
 
     private int id;
     private String nome;
-    private String endereco;
     private String telefone;
 
-    public Tutor() {
+    public Cliente() {
     }
 
-    public Tutor(int id, String nome, String endereco, String telefone) {
+    public Cliente(int id, String nome, String telefone) {
         this.id = id;
         this.nome = nome;
-        this.endereco = endereco;
         this.telefone = telefone;
     }
 
-    public Tutor(String nome, String endereco, String telefone) {
+    public Cliente(String nome, String telefone) {
         this.nome = nome;
-        this.endereco = endereco;
         this.telefone = telefone;
     }
 
@@ -39,14 +36,6 @@ public class Tutor {
         this.nome = nome;
     }
 
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-
     public String getTelefone() {
         return telefone;
     }
@@ -57,10 +46,9 @@ public class Tutor {
 
     @Override
     public String toString() {
-        return "Tutor{" +
+        return "Cliente{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
-                ", endereco='" + endereco + '\'' +
                 ", telefone='" + telefone + '\'' +
                 '}';
     }

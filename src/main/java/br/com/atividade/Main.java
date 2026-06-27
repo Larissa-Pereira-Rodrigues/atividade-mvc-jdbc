@@ -1,15 +1,13 @@
 package br.com.atividade;
 
-import br.com.atividade.controller.AnimalController;
-import br.com.atividade.controller.ConsultaController;
-import br.com.atividade.controller.TutorController;
-import br.com.atividade.model.Animal;
-import br.com.atividade.model.Consulta;
-import br.com.atividade.model.Tutor;
+import br.com.atividade.controller.ClienteController;
+import br.com.atividade.controller.OrdemServicoController;
+import br.com.atividade.controller.VeiculoController;
+import br.com.atividade.model.Cliente;
+import br.com.atividade.model.OrdemServico;
+import br.com.atividade.model.Veiculo;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,9 +15,9 @@ public class Main {
 
     static Scanner scanner = new Scanner(System.in);
 
-    static TutorController tutorController = new TutorController();
-    static AnimalController animalController = new AnimalController();
-    static ConsultaController consultaController = new ConsultaController();
+    static ClienteController clienteController = new ClienteController();
+    static VeiculoController veiculoController = new VeiculoController();
+    static OrdemServicoController ordemServicoController = new OrdemServicoController();
 
     public static void main(String[] args) {
         int opcao = -1;
@@ -29,14 +27,14 @@ public class Main {
             opcao = lerOpcao();
 
             switch (opcao) {
-                case 1 -> cadastrarTutor();
-                case 2 -> cadastrarAnimal();
-                case 3 -> registrarConsulta();
-                case 4 -> listarTutores();
-                case 5 -> listarAnimais();
-                case 6 -> listarConsultas();
-                case 7 -> listarAnimaisPorTutor();
-                case 8 -> listarConsultasPorAnimal();
+                case 1 -> cadastrarCliente();
+                case 2 -> cadastrarVeiculo();
+                case 3 -> abrirOrdemServico();
+                case 4 -> listarClientes();
+                case 5 -> listarVeiculos();
+                case 6 -> listarOrdensServico();
+                case 7 -> listarVeiculosPorCliente();
+                case 8 -> listarOrdensPorVeiculo();
                 case 0 -> System.out.println("Encerrando o sistema. Até logo!");
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
@@ -46,15 +44,15 @@ public class Main {
     }
 
     static void exibirMenu() {
-        System.out.println("\n===== Clínica Veterinária =====");
-        System.out.println("1 - Cadastrar Tutor");
-        System.out.println("2 - Cadastrar Animal");
-        System.out.println("3 - Registrar Consulta");
-        System.out.println("4 - Listar Tutores");
-        System.out.println("5 - Listar Animais");
-        System.out.println("6 - Listar Consultas");
-        System.out.println("7 - Listar Animais por Tutor");
-        System.out.println("8 - Listar Consultas por Animal");
+        System.out.println("\n===== Oficina Mecânica =====");
+        System.out.println("1 - Cadastrar Cliente");
+        System.out.println("2 - Cadastrar Veículo");
+        System.out.println("3 - Abrir Ordem de Serviço");
+        System.out.println("4 - Listar Clientes");
+        System.out.println("5 - Listar Veículos");
+        System.out.println("6 - Listar Ordens de Serviço");
+        System.out.println("7 - Listar Veículos por Cliente");
+        System.out.println("8 - Listar Ordens por Veículo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -67,165 +65,161 @@ public class Main {
         }
     }
 
-    static void cadastrarTutor() {
+    static void cadastrarCliente() {
         try {
             System.out.print("Nome: ");
             String nome = scanner.nextLine();
-
-            System.out.print("Endereço: ");
-            String endereco = scanner.nextLine();
 
             System.out.print("Telefone: ");
             String telefone = scanner.nextLine();
 
-            tutorController.cadastrar(nome, endereco, telefone);
-            System.out.println("Tutor cadastrado com sucesso!");
+            clienteController.cadastrar(nome, telefone);
+            System.out.println("Cliente cadastrado com sucesso!");
 
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar tutor: " + e.getMessage());
+            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
         }
     }
 
-    static void cadastrarAnimal() {
+    static void cadastrarVeiculo() {
         try {
-            System.out.print("Nome: ");
-            String nome = scanner.nextLine();
+            System.out.print("Placa: ");
+            String placa = scanner.nextLine();
 
-            System.out.print("Espécie: ");
-            String especie = scanner.nextLine();
+            System.out.print("Modelo: ");
+            String modelo = scanner.nextLine();
 
-            System.out.print("Raça: ");
-            String raca = scanner.nextLine();
+            System.out.print("Ano: ");
+            int ano = Integer.parseInt(scanner.nextLine().trim());
 
-            System.out.print("ID do Tutor: ");
-            int tutorId = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("ID do Cliente: ");
+            int clienteId = Integer.parseInt(scanner.nextLine().trim());
 
-            animalController.cadastrar(nome, especie, raca, tutorId);
-            System.out.println("Animal cadastrado com sucesso!");
+            veiculoController.cadastrar(placa, modelo, ano, clienteId);
+            System.out.println("Veículo cadastrado com sucesso!");
 
+        } catch (NumberFormatException e) {
+            System.out.println("Valor inválido. Digite um número inteiro.");
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar animal: " + e.getMessage());
+            System.out.println("Erro ao cadastrar veículo: " + e.getMessage());
         }
     }
 
-    static void registrarConsulta() {
+    static void abrirOrdemServico() {
         try {
-            System.out.print("ID do Animal: ");
-            int animalId = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("ID do Veículo: ");
+            int veiculoId = Integer.parseInt(scanner.nextLine().trim());
 
-            System.out.print("Data (AAAA-MM-DD): ");
-            LocalDate data = LocalDate.parse(scanner.nextLine().trim());
-
-            System.out.print("Motivo: ");
-            String motivo = scanner.nextLine();
+            System.out.print("Descrição: ");
+            String descricao = scanner.nextLine();
 
             System.out.print("Valor: ");
             double valor = Double.parseDouble(scanner.nextLine().trim());
 
-            consultaController.cadastrar(animalId, data, motivo, valor);
-            System.out.println("Consulta registrada com sucesso!");
+            System.out.print("Status (ABERTA ou CONCLUIDA): ");
+            String status = scanner.nextLine();
 
-        } catch (DateTimeParseException e) {
-            System.out.println("Data inválida. Use o formato AAAA-MM-DD.");
+            ordemServicoController.cadastrar(veiculoId, descricao, valor, status);
+            System.out.println("Ordem de serviço aberta com sucesso!");
+
         } catch (NumberFormatException e) {
             System.out.println("Valor inválido. Digite um número.");
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao registrar consulta: " + e.getMessage());
+            System.out.println("Erro ao abrir ordem de serviço: " + e.getMessage());
         }
     }
 
-    static void listarTutores() {
+    static void listarClientes() {
         try {
-            List<Tutor> tutores = tutorController.listar();
+            List<Cliente> clientes = clienteController.listar();
 
-            if (tutores.isEmpty()) {
-                System.out.println("Nenhum tutor cadastrado.");
+            if (clientes.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado.");
                 return;
             }
 
-            System.out.println("\n===== Tutores =====");
-            for (Tutor t : tutores) {
-                System.out.println("ID: " + t.getId()
-                        + " | Nome: " + t.getNome()
-                        + " | Endereço: " + t.getEndereco()
-                        + " | Telefone: " + t.getTelefone());
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar tutores: " + e.getMessage());
-        }
-    }
-
-    static void listarAnimais() {
-        try {
-            List<Animal> animais = animalController.listar();
-
-            if (animais.isEmpty()) {
-                System.out.println("Nenhum animal cadastrado.");
-                return;
-            }
-
-            System.out.println("\n===== Animais =====");
-            for (Animal a : animais) {
-                System.out.println("ID: " + a.getId()
-                        + " | Nome: " + a.getNome()
-                        + " | Espécie: " + a.getEspecie()
-                        + " | Raça: " + a.getRaca()
-                        + " | Tutor ID: " + a.getTutorId());
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar animais: " + e.getMessage());
-        }
-    }
-
-    static void listarConsultas() {
-        try {
-            List<Consulta> consultas = consultaController.listar();
-
-            if (consultas.isEmpty()) {
-                System.out.println("Nenhuma consulta registrada.");
-                return;
-            }
-
-            System.out.println("\n===== Consultas =====");
-            for (Consulta c : consultas) {
+            System.out.println("\n===== Clientes =====");
+            for (Cliente c : clientes) {
                 System.out.println("ID: " + c.getId()
-                        + " | Animal ID: " + c.getAnimalId()
-                        + " | Data: " + c.getData()
-                        + " | Motivo: " + c.getMotivo()
-                        + " | Valor: R$ " + String.format("%.2f", c.getValor()));
+                        + " | Nome: " + c.getNome()
+                        + " | Telefone: " + c.getTelefone());
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao listar consultas: " + e.getMessage());
+            System.out.println("Erro ao listar clientes: " + e.getMessage());
         }
     }
 
-    static void listarAnimaisPorTutor() {
+    static void listarVeiculos() {
         try {
-            System.out.print("ID do Tutor: ");
-            int tutorId = Integer.parseInt(scanner.nextLine().trim());
+            List<Veiculo> veiculos = veiculoController.listar();
 
-            List<Animal> animais = animalController.listarPorTutor(tutorId);
-
-            if (animais.isEmpty()) {
-                System.out.println("Nenhum animal encontrado para este tutor.");
+            if (veiculos.isEmpty()) {
+                System.out.println("Nenhum veículo cadastrado.");
                 return;
             }
 
-            System.out.println("\n===== Animais do Tutor ID " + tutorId + " =====");
-            for (Animal a : animais) {
-                System.out.println("ID: " + a.getId()
-                        + " | Nome: " + a.getNome()
-                        + " | Espécie: " + a.getEspecie()
-                        + " | Raça: " + a.getRaca());
+            System.out.println("\n===== Veículos =====");
+            for (Veiculo v : veiculos) {
+                System.out.println("ID: " + v.getId()
+                        + " | Placa: " + v.getPlaca()
+                        + " | Modelo: " + v.getModelo()
+                        + " | Ano: " + v.getAno()
+                        + " | Cliente ID: " + v.getClienteId());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar veículos: " + e.getMessage());
+        }
+    }
+
+    static void listarOrdensServico() {
+        try {
+            List<OrdemServico> ordens = ordemServicoController.listar();
+
+            if (ordens.isEmpty()) {
+                System.out.println("Nenhuma ordem de serviço registrada.");
+                return;
+            }
+
+            System.out.println("\n===== Ordens de Serviço =====");
+            for (OrdemServico o : ordens) {
+                System.out.println("ID: " + o.getId()
+                        + " | Veículo ID: " + o.getVeiculoId()
+                        + " | Descrição: " + o.getDescricao()
+                        + " | Valor: R$ " + String.format("%.2f", o.getValor())
+                        + " | Status: " + o.getStatus());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar ordens de serviço: " + e.getMessage());
+        }
+    }
+
+    static void listarVeiculosPorCliente() {
+        try {
+            System.out.print("ID do Cliente: ");
+            int clienteId = Integer.parseInt(scanner.nextLine().trim());
+
+            List<Veiculo> veiculos = veiculoController.listarPorCliente(clienteId);
+
+            if (veiculos.isEmpty()) {
+                System.out.println("Nenhum veículo encontrado para este cliente.");
+                return;
+            }
+
+            System.out.println("\n===== Veículos do Cliente ID " + clienteId + " =====");
+            for (Veiculo v : veiculos) {
+                System.out.println("ID: " + v.getId()
+                        + " | Placa: " + v.getPlaca()
+                        + " | Modelo: " + v.getModelo()
+                        + " | Ano: " + v.getAno());
             }
 
         } catch (NumberFormatException e) {
@@ -233,28 +227,28 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao listar animais por tutor: " + e.getMessage());
+            System.out.println("Erro ao listar veículos por cliente: " + e.getMessage());
         }
     }
 
-    static void listarConsultasPorAnimal() {
+    static void listarOrdensPorVeiculo() {
         try {
-            System.out.print("ID do Animal: ");
-            int animalId = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("ID do Veículo: ");
+            int veiculoId = Integer.parseInt(scanner.nextLine().trim());
 
-            List<Consulta> consultas = consultaController.listarPorAnimal(animalId);
+            List<OrdemServico> ordens = ordemServicoController.listarPorVeiculo(veiculoId);
 
-            if (consultas.isEmpty()) {
-                System.out.println("Nenhuma consulta encontrada para este animal.");
+            if (ordens.isEmpty()) {
+                System.out.println("Nenhuma ordem de serviço encontrada para este veículo.");
                 return;
             }
 
-            System.out.println("\n===== Consultas do Animal ID " + animalId + " =====");
-            for (Consulta c : consultas) {
-                System.out.println("ID: " + c.getId()
-                        + " | Data: " + c.getData()
-                        + " | Motivo: " + c.getMotivo()
-                        + " | Valor: R$ " + String.format("%.2f", c.getValor()));
+            System.out.println("\n===== Ordens de Serviço do Veículo ID " + veiculoId + " =====");
+            for (OrdemServico o : ordens) {
+                System.out.println("ID: " + o.getId()
+                        + " | Descrição: " + o.getDescricao()
+                        + " | Valor: R$ " + String.format("%.2f", o.getValor())
+                        + " | Status: " + o.getStatus());
             }
 
         } catch (NumberFormatException e) {
@@ -262,7 +256,7 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao listar consultas por animal: " + e.getMessage());
+            System.out.println("Erro ao listar ordens por veículo: " + e.getMessage());
         }
     }
 }

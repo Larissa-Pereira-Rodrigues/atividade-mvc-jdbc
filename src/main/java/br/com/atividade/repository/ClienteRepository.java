@@ -1,43 +1,41 @@
 package br.com.atividade.repository;
 
-import br.com.atividade.model.Tutor;
+import br.com.atividade.model.Cliente;
 import br.com.atividade.util.Conexao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TutorRepository {
+public class ClienteRepository {
 
-    public void inserir(Tutor tutor) throws SQLException {
-        String sql = "INSERT INTO tutor (nome, endereco, telefone) VALUES (?, ?, ?)";
+    public void inserir(Cliente cliente) throws SQLException {
+        String sql = "INSERT INTO cliente (nome, telefone) VALUES (?, ?)";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, tutor.getNome());
-            stmt.setString(2, tutor.getEndereco());
-            stmt.setString(3, tutor.getTelefone());
+            stmt.setString(1, cliente.getNome());
+            stmt.setString(2, cliente.getTelefone());
             stmt.executeUpdate();
         }
     }
 
-    public void atualizar(Tutor tutor) throws SQLException {
-        String sql = "UPDATE tutor SET nome = ?, endereco = ?, telefone = ? WHERE id = ?";
+    public void atualizar(Cliente cliente) throws SQLException {
+        String sql = "UPDATE cliente SET nome = ?, telefone = ? WHERE id = ?";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, tutor.getNome());
-            stmt.setString(2, tutor.getEndereco());
-            stmt.setString(3, tutor.getTelefone());
-            stmt.setInt(4, tutor.getId());
+            stmt.setString(1, cliente.getNome());
+            stmt.setString(2, cliente.getTelefone());
+            stmt.setInt(3, cliente.getId());
             stmt.executeUpdate();
         }
     }
 
     public void excluir(int id) throws SQLException {
-        String sql = "DELETE FROM tutor WHERE id = ?";
+        String sql = "DELETE FROM cliente WHERE id = ?";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -47,8 +45,8 @@ public class TutorRepository {
         }
     }
 
-    public Tutor buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM tutor WHERE id = ?";
+    public Cliente buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM cliente WHERE id = ?";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -64,26 +62,25 @@ public class TutorRepository {
         return null;
     }
 
-    public List<Tutor> listar() throws SQLException {
-        String sql = "SELECT * FROM tutor ORDER BY id";
-        List<Tutor> tutores = new ArrayList<>();
+    public List<Cliente> listar() throws SQLException {
+        String sql = "SELECT * FROM cliente ORDER BY id";
+        List<Cliente> clientes = new ArrayList<>();
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                tutores.add(mapear(rs));
+                clientes.add(mapear(rs));
             }
         }
-        return tutores;
+        return clientes;
     }
 
-    private Tutor mapear(ResultSet rs) throws SQLException {
-        return new Tutor(
+    private Cliente mapear(ResultSet rs) throws SQLException {
+        return new Cliente(
                 rs.getInt("id"),
                 rs.getString("nome"),
-                rs.getString("endereco"),
                 rs.getString("telefone")
         );
     }
