@@ -1,41 +1,43 @@
 package br.com.atividade.repository;
 
-import br.com.atividade.model.Cliente;
+import br.com.atividade.model.Aluno;
 import br.com.atividade.util.Conexao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClienteRepository {
+public class AlunoRepository {
 
-    public void inserir(Cliente cliente) throws SQLException {
-        String sql = "INSERT INTO cliente (nome, telefone) VALUES (?, ?)";
+    public void inserir(Aluno aluno) throws SQLException {
+        String sql = "INSERT INTO aluno (nome, email, telefone) VALUES (?, ?, ?)";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, cliente.getNome());
-            stmt.setString(2, cliente.getTelefone());
+            stmt.setString(1, aluno.getNome());
+            stmt.setString(2, aluno.getEmail());
+            stmt.setString(3, aluno.getTelefone());
             stmt.executeUpdate();
         }
     }
 
-    public void atualizar(Cliente cliente) throws SQLException {
-        String sql = "UPDATE cliente SET nome = ?, telefone = ? WHERE id = ?";
+    public void atualizar(Aluno aluno) throws SQLException {
+        String sql = "UPDATE aluno SET nome = ?, email = ?, telefone = ? WHERE id = ?";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, cliente.getNome());
-            stmt.setString(2, cliente.getTelefone());
-            stmt.setInt(3, cliente.getId());
+            stmt.setString(1, aluno.getNome());
+            stmt.setString(2, aluno.getEmail());
+            stmt.setString(3, aluno.getTelefone());
+            stmt.setInt(4, aluno.getId());
             stmt.executeUpdate();
         }
     }
 
     public void excluir(int id) throws SQLException {
-        String sql = "DELETE FROM cliente WHERE id = ?";
+        String sql = "DELETE FROM aluno WHERE id = ?";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -45,8 +47,8 @@ public class ClienteRepository {
         }
     }
 
-    public Cliente buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM cliente WHERE id = ?";
+    public Aluno buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM aluno WHERE id = ?";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -62,25 +64,26 @@ public class ClienteRepository {
         return null;
     }
 
-    public List<Cliente> listar() throws SQLException {
-        String sql = "SELECT * FROM cliente ORDER BY id";
-        List<Cliente> clientes = new ArrayList<>();
+    public List<Aluno> listar() throws SQLException {
+        String sql = "SELECT * FROM aluno ORDER BY id";
+        List<Aluno> alunos = new ArrayList<>();
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                clientes.add(mapear(rs));
+                alunos.add(mapear(rs));
             }
         }
-        return clientes;
+        return alunos;
     }
 
-    private Cliente mapear(ResultSet rs) throws SQLException {
-        return new Cliente(
+    private Aluno mapear(ResultSet rs) throws SQLException {
+        return new Aluno(
                 rs.getInt("id"),
                 rs.getString("nome"),
+                rs.getString("email"),
                 rs.getString("telefone")
         );
     }

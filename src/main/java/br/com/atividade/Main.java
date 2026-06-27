@@ -1,13 +1,15 @@
 package br.com.atividade;
 
-import br.com.atividade.controller.ClienteController;
-import br.com.atividade.controller.OrdemServicoController;
-import br.com.atividade.controller.VeiculoController;
-import br.com.atividade.model.Cliente;
-import br.com.atividade.model.OrdemServico;
-import br.com.atividade.model.Veiculo;
+import br.com.atividade.controller.AlunoController;
+import br.com.atividade.controller.CursoController;
+import br.com.atividade.controller.MatriculaController;
+import br.com.atividade.model.Aluno;
+import br.com.atividade.model.Curso;
+import br.com.atividade.model.Matricula;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,9 +17,9 @@ public class Main {
 
     static Scanner scanner = new Scanner(System.in);
 
-    static ClienteController clienteController = new ClienteController();
-    static VeiculoController veiculoController = new VeiculoController();
-    static OrdemServicoController ordemServicoController = new OrdemServicoController();
+    static AlunoController alunoController = new AlunoController();
+    static CursoController cursoController = new CursoController();
+    static MatriculaController matriculaController = new MatriculaController();
 
     public static void main(String[] args) {
         int opcao = -1;
@@ -27,14 +29,14 @@ public class Main {
             opcao = lerOpcao();
 
             switch (opcao) {
-                case 1 -> cadastrarCliente();
-                case 2 -> cadastrarVeiculo();
-                case 3 -> abrirOrdemServico();
-                case 4 -> listarClientes();
-                case 5 -> listarVeiculos();
-                case 6 -> listarOrdensServico();
-                case 7 -> listarVeiculosPorCliente();
-                case 8 -> listarOrdensPorVeiculo();
+                case 1 -> cadastrarAluno();
+                case 2 -> cadastrarCurso();
+                case 3 -> realizarMatricula();
+                case 4 -> listarAlunos();
+                case 5 -> listarCursos();
+                case 6 -> listarMatriculas();
+                case 7 -> listarMatriculasPorAluno();
+                case 8 -> listarMatriculasPorCurso();
                 case 0 -> System.out.println("Encerrando o sistema. Até logo!");
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
@@ -44,15 +46,15 @@ public class Main {
     }
 
     static void exibirMenu() {
-        System.out.println("\n===== Oficina Mecânica =====");
-        System.out.println("1 - Cadastrar Cliente");
-        System.out.println("2 - Cadastrar Veículo");
-        System.out.println("3 - Abrir Ordem de Serviço");
-        System.out.println("4 - Listar Clientes");
-        System.out.println("5 - Listar Veículos");
-        System.out.println("6 - Listar Ordens de Serviço");
-        System.out.println("7 - Listar Veículos por Cliente");
-        System.out.println("8 - Listar Ordens por Veículo");
+        System.out.println("\nSistema Acadêmico");
+        System.out.println("\n1 - Cadastrar Aluno");
+        System.out.println("2 - Cadastrar Curso");
+        System.out.println("3 - Realizar Matrícula");
+        System.out.println("4 - Listar Alunos");
+        System.out.println("5 - Listar Cursos");
+        System.out.println("6 - Listar Matrículas");
+        System.out.println("7 - Listar Matrículas por Aluno");
+        System.out.println("8 - Listar Matrículas por Curso");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -65,161 +67,171 @@ public class Main {
         }
     }
 
-    static void cadastrarCliente() {
+    static void cadastrarAluno() {
         try {
             System.out.print("Nome: ");
             String nome = scanner.nextLine();
 
+            System.out.print("Email: ");
+            String email = scanner.nextLine();
+
             System.out.print("Telefone: ");
             String telefone = scanner.nextLine();
 
-            clienteController.cadastrar(nome, telefone);
-            System.out.println("Cliente cadastrado com sucesso!");
+            alunoController.cadastrar(nome, email, telefone);
+            System.out.println("Aluno cadastrado com sucesso!");
 
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
+            System.out.println("Erro ao cadastrar aluno: " + e.getMessage());
         }
     }
 
-    static void cadastrarVeiculo() {
+    static void cadastrarCurso() {
         try {
-            System.out.print("Placa: ");
-            String placa = scanner.nextLine();
+            System.out.print("Nome: ");
+            String nome = scanner.nextLine();
 
-            System.out.print("Modelo: ");
-            String modelo = scanner.nextLine();
+            System.out.print("Descrição: ");
+            String descricao = scanner.nextLine();
 
-            System.out.print("Ano: ");
-            int ano = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("Carga Horária: ");
+            int cargaHoraria = Integer.parseInt(scanner.nextLine().trim());
 
-            System.out.print("ID do Cliente: ");
-            int clienteId = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("Vagas Totais: ");
+            int vagasTotais = Integer.parseInt(scanner.nextLine().trim());
 
-            veiculoController.cadastrar(placa, modelo, ano, clienteId);
-            System.out.println("Veículo cadastrado com sucesso!");
+            System.out.print("Vagas Disponíveis: ");
+            int vagasDisponiveis = Integer.parseInt(scanner.nextLine().trim());
+
+            cursoController.cadastrar(nome, descricao, cargaHoraria, vagasTotais, vagasDisponiveis);
+            System.out.println("Curso cadastrado com sucesso!");
 
         } catch (NumberFormatException e) {
             System.out.println("Valor inválido. Digite um número inteiro.");
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar veículo: " + e.getMessage());
+            System.out.println("Erro ao cadastrar curso: " + e.getMessage());
         }
     }
 
-    static void abrirOrdemServico() {
+    static void realizarMatricula() {
         try {
-            System.out.print("ID do Veículo: ");
-            int veiculoId = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("ID do Aluno: ");
+            int alunoId = Integer.parseInt(scanner.nextLine().trim());
 
-            System.out.print("Descrição: ");
-            String descricao = scanner.nextLine();
+            System.out.print("ID do Curso: ");
+            int cursoId = Integer.parseInt(scanner.nextLine().trim());
+
+            System.out.print("Data da Matrícula (AAAA-MM-DD): ");
+            LocalDate dataMatricula = LocalDate.parse(scanner.nextLine().trim());
 
             System.out.print("Valor: ");
             double valor = Double.parseDouble(scanner.nextLine().trim());
 
-            System.out.print("Status (ABERTA ou CONCLUIDA): ");
-            String status = scanner.nextLine();
+            matriculaController.cadastrar(alunoId, cursoId, dataMatricula, valor);
+            System.out.println("Matrícula realizada com sucesso!");
 
-            ordemServicoController.cadastrar(veiculoId, descricao, valor, status);
-            System.out.println("Ordem de serviço aberta com sucesso!");
-
+        } catch (DateTimeParseException e) {
+            System.out.println("Data inválida. Use o formato AAAA-MM-DD.");
         } catch (NumberFormatException e) {
             System.out.println("Valor inválido. Digite um número.");
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao abrir ordem de serviço: " + e.getMessage());
+            System.out.println("Erro ao realizar matrícula: " + e.getMessage());
         }
     }
 
-    static void listarClientes() {
+    static void listarAlunos() {
         try {
-            List<Cliente> clientes = clienteController.listar();
+            List<Aluno> alunos = alunoController.listar();
 
-            if (clientes.isEmpty()) {
-                System.out.println("Nenhum cliente cadastrado.");
+            if (alunos.isEmpty()) {
+                System.out.println("Nenhum aluno cadastrado.");
                 return;
             }
 
-            System.out.println("\n===== Clientes =====");
-            for (Cliente c : clientes) {
+            System.out.println("\n===== Alunos =====");
+            for (Aluno a : alunos) {
+                System.out.println("ID: " + a.getId()
+                        + " | Nome: " + a.getNome()
+                        + " | Email: " + a.getEmail()
+                        + " | Telefone: " + a.getTelefone());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar alunos: " + e.getMessage());
+        }
+    }
+
+    static void listarCursos() {
+        try {
+            List<Curso> cursos = cursoController.listar();
+
+            if (cursos.isEmpty()) {
+                System.out.println("Nenhum curso cadastrado.");
+                return;
+            }
+
+            System.out.println("\n===== Cursos =====");
+            for (Curso c : cursos) {
                 System.out.println("ID: " + c.getId()
                         + " | Nome: " + c.getNome()
-                        + " | Telefone: " + c.getTelefone());
+                        + " | Descrição: " + c.getDescricao()
+                        + " | Carga Horária: " + c.getCargaHoraria() + "h"
+                        + " | Vagas Totais: " + c.getVagasTotais()
+                        + " | Vagas Disponíveis: " + c.getVagasDisponiveis());
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao listar clientes: " + e.getMessage());
+            System.out.println("Erro ao listar cursos: " + e.getMessage());
         }
     }
 
-    static void listarVeiculos() {
+    static void listarMatriculas() {
         try {
-            List<Veiculo> veiculos = veiculoController.listar();
+            List<Matricula> matriculas = matriculaController.listar();
 
-            if (veiculos.isEmpty()) {
-                System.out.println("Nenhum veículo cadastrado.");
+            if (matriculas.isEmpty()) {
+                System.out.println("Nenhuma matrícula registrada.");
                 return;
             }
 
-            System.out.println("\n===== Veículos =====");
-            for (Veiculo v : veiculos) {
-                System.out.println("ID: " + v.getId()
-                        + " | Placa: " + v.getPlaca()
-                        + " | Modelo: " + v.getModelo()
-                        + " | Ano: " + v.getAno()
-                        + " | Cliente ID: " + v.getClienteId());
+            System.out.println("\n===== Matrículas =====");
+            for (Matricula m : matriculas) {
+                System.out.println("ID: " + m.getId()
+                        + " | Aluno ID: " + m.getAlunoId()
+                        + " | Curso ID: " + m.getCursoId()
+                        + " | Data: " + m.getDataMatricula()
+                        + " | Valor: R$ " + String.format("%.2f", m.getValor()));
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao listar veículos: " + e.getMessage());
+            System.out.println("Erro ao listar matrículas: " + e.getMessage());
         }
     }
 
-    static void listarOrdensServico() {
+    static void listarMatriculasPorAluno() {
         try {
-            List<OrdemServico> ordens = ordemServicoController.listar();
+            System.out.print("ID do Aluno: ");
+            int alunoId = Integer.parseInt(scanner.nextLine().trim());
 
-            if (ordens.isEmpty()) {
-                System.out.println("Nenhuma ordem de serviço registrada.");
+            List<Matricula> matriculas = matriculaController.listarPorAluno(alunoId);
+
+            if (matriculas.isEmpty()) {
+                System.out.println("Nenhuma matrícula encontrada para este aluno.");
                 return;
             }
 
-            System.out.println("\n===== Ordens de Serviço =====");
-            for (OrdemServico o : ordens) {
-                System.out.println("ID: " + o.getId()
-                        + " | Veículo ID: " + o.getVeiculoId()
-                        + " | Descrição: " + o.getDescricao()
-                        + " | Valor: R$ " + String.format("%.2f", o.getValor())
-                        + " | Status: " + o.getStatus());
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar ordens de serviço: " + e.getMessage());
-        }
-    }
-
-    static void listarVeiculosPorCliente() {
-        try {
-            System.out.print("ID do Cliente: ");
-            int clienteId = Integer.parseInt(scanner.nextLine().trim());
-
-            List<Veiculo> veiculos = veiculoController.listarPorCliente(clienteId);
-
-            if (veiculos.isEmpty()) {
-                System.out.println("Nenhum veículo encontrado para este cliente.");
-                return;
-            }
-
-            System.out.println("\n===== Veículos do Cliente ID " + clienteId + " =====");
-            for (Veiculo v : veiculos) {
-                System.out.println("ID: " + v.getId()
-                        + " | Placa: " + v.getPlaca()
-                        + " | Modelo: " + v.getModelo()
-                        + " | Ano: " + v.getAno());
+            System.out.println("\n===== Matrículas do Aluno ID " + alunoId + " =====");
+            for (Matricula m : matriculas) {
+                System.out.println("ID: " + m.getId()
+                        + " | Curso ID: " + m.getCursoId()
+                        + " | Data: " + m.getDataMatricula()
+                        + " | Valor: R$ " + String.format("%.2f", m.getValor()));
             }
 
         } catch (NumberFormatException e) {
@@ -227,28 +239,28 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao listar veículos por cliente: " + e.getMessage());
+            System.out.println("Erro ao listar matrículas por aluno: " + e.getMessage());
         }
     }
 
-    static void listarOrdensPorVeiculo() {
+    static void listarMatriculasPorCurso() {
         try {
-            System.out.print("ID do Veículo: ");
-            int veiculoId = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("ID do Curso: ");
+            int cursoId = Integer.parseInt(scanner.nextLine().trim());
 
-            List<OrdemServico> ordens = ordemServicoController.listarPorVeiculo(veiculoId);
+            List<Matricula> matriculas = matriculaController.listarPorCurso(cursoId);
 
-            if (ordens.isEmpty()) {
-                System.out.println("Nenhuma ordem de serviço encontrada para este veículo.");
+            if (matriculas.isEmpty()) {
+                System.out.println("Nenhuma matrícula encontrada para este curso.");
                 return;
             }
 
-            System.out.println("\n===== Ordens de Serviço do Veículo ID " + veiculoId + " =====");
-            for (OrdemServico o : ordens) {
-                System.out.println("ID: " + o.getId()
-                        + " | Descrição: " + o.getDescricao()
-                        + " | Valor: R$ " + String.format("%.2f", o.getValor())
-                        + " | Status: " + o.getStatus());
+            System.out.println("\n===== Matrículas do Curso ID " + cursoId + " =====");
+            for (Matricula m : matriculas) {
+                System.out.println("ID: " + m.getId()
+                        + " | Aluno ID: " + m.getAlunoId()
+                        + " | Data: " + m.getDataMatricula()
+                        + " | Valor: R$ " + String.format("%.2f", m.getValor()));
             }
 
         } catch (NumberFormatException e) {
@@ -256,7 +268,7 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("Erro de validação: " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Erro ao listar ordens por veículo: " + e.getMessage());
+            System.out.println("Erro ao listar matrículas por curso: " + e.getMessage());
         }
     }
 }

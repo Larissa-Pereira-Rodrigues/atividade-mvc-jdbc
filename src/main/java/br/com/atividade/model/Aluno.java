@@ -1,22 +1,25 @@
 package br.com.atividade.model;
 
-public class Cliente {
+public class Aluno {
 
     private int id;
     private String nome;
+    private String email;
     private String telefone;
 
-    public Cliente() {
+    public Aluno() {
     }
 
-    public Cliente(int id, String nome, String telefone) {
+    public Aluno(int id, String nome, String email, String telefone) {
         this.id = id;
         this.nome = nome;
+        this.email = email;
         this.telefone = telefone;
     }
 
-    public Cliente(String nome, String telefone) {
+    public Aluno(String nome, String email, String telefone) {
         this.nome = nome;
+        this.email = email;
         this.telefone = telefone;
     }
 
@@ -36,6 +39,14 @@ public class Cliente {
         this.nome = nome;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getTelefone() {
         return telefone;
     }
@@ -46,9 +57,10 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Cliente{" +
+        return "Aluno{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
                 ", telefone='" + telefone + '\'' +
                 '}';
     }
